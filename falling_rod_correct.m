@@ -31,42 +31,72 @@ thetafs = zeros(length(tfs),1);
 
 z0 = zeros(7,1);
 
-lambda = z0;
+Q = z0;
 
 %% main loop
 i = 1;
+
 while t <= tend
-    
-    % approximate qhat
+
+    % set qhat_prev = 0;
+    qhat_prev = 0*q;
+        
+    % Find n and alpha0 at this approx qhat
+    n = [[0 1 l*cos(theta)/2]' [0 1 -l*cos(theta)/2]' ];
+    D = [[1 0 l*sin(theta)/2]' [1 0 -l*sin(theta)/2]'  [-1 0 -l*sin(theta)/2]' [-1 0 l*sin(theta)/2]' ];
+    f = [q(2)+(l/2)*sin(theta)-rho q(2)-(l/2)*sin(theta)-rho]';
+%     if i == 155 %% at i == 155, its above contact, 
+%     % % such that in the next step it will be violating constraint
+%         break
+%     end
+    alpha0 = n'*q - f;
+
+    %%%%%%%%%%%%%%%%%% fixed point iteration %%%%%%%%%%%%%%%%%
+
+    % approximate qhat 
     qhat = q + dt*v;
     thetahat = qhat(3);
     
-    % Find n and alpha0 at this approx qhat
-    n = [[0 1 l*cos(thetahat)/2]' [0 1 -l*cos(thetahat)/2]' ];
-    D = [[1 0 l*sin(thetahat)/2]' [1 0 -l*sin(thetahat)/2]'  [-1 0 -l*sin(thetahat)/2]' [-1 0 l*sin(thetahat)/2]' ];
-    f = [qhat(2)+(l/2)*sin(thetahat)-rho qhat(2)-(l/2)*sin(thetahat)-rho]';
-    alpha0 = n'*qhat - f; 
+    while norm(qhat - qhat_prev)  > 0.005
+    
+        % Find n and alpha0 at this approx qhat
+        n = [[0 1 l*cos(thetahat)/2]' [0 1 -l*cos(thetahat)/2]' ];
+        D = [[1 0 l*sin(thetahat)/2]' [-1 0 -l*sin(thetahat)/2]'  [1 0 -l*sin(thetahat)/2]' [-1 0 l*sin(thetahat)/2]' ];
+        f = [qhat(2)+(l/2)*sin(thetahat)-rho qhat(2)-(l/2)*sin(thetahat)-rho]';
+        alpha0 = n'*qhat - f; 
+    
+        % Solve LCP for this new n and alpha0
+        A = [D'*M^(-1)*D D'*M^(-1)*n e;
+             n'*M^(-1)*D n'*M^(-1)*n [0;0];
+             -e' mu 0 0];
+        b = [D'*(v + dt*M^(-1)*[0 g 0]');
+             (n'*q-alpha0)/dt + n'*(v+dt*M^(-1)*[0 g 0]');
+             0];
 
-    % Solve LCP for this new n and alpha0
-    A = [D'*M^(-1)*D D'*M^(-1)*n e;
-         n'*M^(-1)*D n'*M^(-1)*n [0;0];
-         -e' mu 0 0];
-    b = [D'*(v + dt*M^(-1)*[0 g 0]');
-         (n'*q-alpha0)/dt + n'*(v+dt*M^(-1)*[0 g 0]');
-         0];
-    % using lemke 
-    [lambda,err] = lemke(A,b,z0);
-%     % using Gauss-Newton
-%     lambda = LCP(A,b,[],[],z0,0);
+        % using lemke 
+        [Q,err] = lemke(A,b,z0);
+        beta = Q(1:4);
+        lambda = Q(7);
+        cn = Q(5:6);
+%         lambda = LCP(A,b);
+        
+        % update previous value
+        qhat_prev = qhat;
+
+        % next estimate
+        vhat = v + M^(-1)*(dt*n*Q(5:6) + dt*D*Q(1:4) + [0 g*dt 0]');
+        qhat = q + dt*v; 
+    end
 
     % now time step
-    v = v + M^(-1)*(n*lambda(5:6) + D*lambda(1:4) + [0 g*dt 0]');
-    q = q + dt*v; 
+    v_ = v;
+    v = v + M^(-1)*(n*Q(5:6) + D*Q(1:4) + [0 g*dt 0]');
+    q = q + dt/2*(v_+v); 
 
     % store full state
     qfs(i,:) = [q' v'];
     theta = q(3);
-    lambdafs(i,:) = lambda';
+    lambdafs(i,:) = Q';
     thetafs(i) = rad2deg(theta);
 
     % update time
