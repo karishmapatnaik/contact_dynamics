@@ -1,0 +1,58 @@
+Path 5.0.99: Matlab Link
+7 row/cols, 45 non-zeros, 91.84% dense.
+
+Could not open options file: path.opt
+Using defaults.
+Path 5.0.99 (Wed Jul  7 14:49:14 2021)
+Written by Todd Munson, Steven Dirkse, Youngdae Kim, and Michael Ferris
+
+
+INITIAL POINT STATISTICS
+Maximum of X. . . . . . . . . .  0.0000e+00 var: (x[    1])
+Maximum of F. . . . . . . . . .  2.4525e-02 eqn: (f[    5])
+Maximum of Grad F . . . . . . .  2.4438e+01 eqn: (f[    5])
+                                            var: (x[    5])
+
+INITIAL JACOBIAN NORM STATISTICS
+Maximum Row Norm. . . . . . . .  1.0100e+02 eqn: (f[    5])
+Minimum Row Norm. . . . . . . .  4.6000e+00 eqn: (f[    7])
+Maximum Column Norm . . . . . .  1.0160e+02 var: (x[    5])
+Minimum Column Norm . . . . . .  4.0000e+00 var: (x[    7])
+
+Crash Log
+major  func  diff  size  residual    step       prox   (label)
+    0     0             6.9367e-02             0.0e+00 (f[    5])
+    1     1     6     4 1.2030e-05  1.0e+00    6.9e-04 (f[    5])
+    2     2     0     4 7.2326e-13  1.0e+00    1.2e-07 (f[    5])
+pn_search terminated: no basis change.
+
+Major Iteration Log
+major minor  func  grad  residual    step  type prox    inorm  (label)
+    0     0     3     3 7.2326e-13           I 7.2e-15 5.1e-13 (f[    5])
+
+FINAL STATISTICS
+Inf-Norm of Complementarity . .  5.1142e-13 eqn: (f[    5])
+Inf-Norm of Normal Map. . . . .  5.1142e-13 eqn: (f[    5])
+Inf-Norm of Minimum Map . . . .  5.1142e-13 eqn: (f[    5])
+Inf-Norm of Fischer Function. .  5.1142e-13 eqn: (f[    5])
+Inf-Norm of Grad Fischer Fcn. .  1.0228e-12 eqn: (f[    5])
+Two-Norm of Grad Fischer Fcn. .  1.4465e-12
+
+FINAL POINT STATISTICS
+Maximum of X. . . . . . . . . .  1.2263e-02 var: (x[    5])
+Maximum of F. . . . . . . . . .  7.3575e-03 eqn: (f[    7])
+Maximum of Grad F . . . . . . .  2.4438e+01 eqn: (f[    5])
+                                            var: (x[    5])
+
+ ** EXIT - solution found.
+
+Major Iterations. . . . 0
+Minor Iterations. . . . 0
+Restarts. . . . . . . . 0
+Crash Iterations. . . . 2
+Gradient Steps. . . . . 0
+Function Evaluations. . 3
+Gradient Evaluations. . 3
+Basis Time. . . . . . . 0.000021
+Total Time. . . . . . . 0.000229
+Residual. . . . . . . . 7.232631e-13
