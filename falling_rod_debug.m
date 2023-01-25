@@ -91,7 +91,7 @@ while t <= tend
     % now time step
     v_ = v;
     v = v + M^(-1)*(n*Q(5:6) + D*Q(1:4) + [0 g*dt 0]');
-    q = q + dt/2*(v_+v); 
+    q = q + dt*v; 
 
     % store full state
     qfs(i,:) = [q' v'];
