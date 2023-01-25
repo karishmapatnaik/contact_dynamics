@@ -1,3 +1,5 @@
+%% LCP with only explicit Euler
+
 clc
 clear
 close all
